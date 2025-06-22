@@ -1,61 +1,101 @@
-# Database Constraints  
-> Revision notes extracted from Mohammed Abu-Hadhoud’s **“What is Constraint?”** presentation (2023).  
-> These notes are intended for second-pass revision and assume basic SQL knowledge. :contentReference[oaicite:0]{index=0}  
+# What is SQL?  
+> Revision notes extracted from Mohammed Abu-Hadhoud’s **“What is SQL?”** presentation (2023).  
+> These notes are intended for second-pass revision and assume basic database concepts. :contentReference[oaicite:0]{index=0}  
 
 ---
 
 ## 1 · Definition  
 
-* A **constraint** is a rule attached to a table or column that enforces **data integrity and consistency**.  
-* Constraints prevent invalid, duplicate, or incomplete data from being stored, making the database trustworthy and easier to manage. :contentReference[oaicite:1]{index=1}  
+* **SQL** stands for **Structured Query Language**.  
+* Pronounced either **“S-Q-L”** or **“See-Quel.”**  
+* Standard language used to **communicate with, access, and manipulate relational databases** across products such as Oracle, Sybase, Microsoft SQL Server, Access, and Ingres. :contentReference[oaicite:1]{index=1}  
 
 ---
 
-## 2 · Why Constraints Matter  
+## 2 · What Can You Do with SQL?  
 
-| Benefit | How It Helps |
-|---------|--------------|
-| **Accuracy** | Blocks impossible or ill-formed values. |
-| **Consistency** | Keeps related tables in sync (referential integrity). |
-| **Uniqueness** | Prevents duplicate rows or values. |
-| **Completeness** | Forces required columns to be filled. |
-| **Maintainability** | Reduces manual clean-up and error handling. |
-
----
-
-## 3 · Five Core Constraint Types  
-
-| # | Constraint | Purpose | Key Rules | Typical Syntax |
-|---|------------|---------|-----------|----------------|
-| 1 | **Primary Key** | Uniquely identifies each row. | Must be **unique** and **NOT NULL**. One PK per table. | `PRIMARY KEY (id)` |
-| 2 | **Foreign Key** | Links a child table to a parent table. | Value must exist in referenced PK; maintains referential integrity. | `FOREIGN KEY (dept_id) REFERENCES Departments(id)` |
-| 3 | **Unique** | Ensures values in a column (or set) are unique. | Allows **NULL** (unless `NOT NULL` also applied). | `UNIQUE (email)` |
-| 4 | **Not Null** | Disallows NULL values. | Column must always contain data. | `salary DECIMAL NOT NULL` |
-| 5 | **Check** | Enforces a custom Boolean condition. | Rejects rows that violate expression. | `CHECK (salary >= 0)` | :contentReference[oaicite:2]{index=2}  
+| Capability | Example |
+|------------|---------|
+| Execute queries | `SELECT * FROM Employees;` |
+| Retrieve data | `SELECT FirstName, LastName FROM Employees;` |
+| Insert records | `INSERT INTO Employees VALUES (...);` |
+| Update records | `UPDATE Employees SET Salary = 4000 WHERE ID = 7;` |
+| Delete records | `DELETE FROM Employees WHERE ID = 7;` |
+| Create databases | `CREATE DATABASE MyDB;` |
+| Create tables | `CREATE TABLE Employees (...);` |
+| Create views & procedures | `CREATE VIEW v_Employees AS …;` |
+| Set permissions | `GRANT SELECT ON Employees TO Analyst;` | :contentReference[oaicite:2]{index=2}  
 
 ---
 
-## 4 · Quick Reference Example  
+## 3 · Example SQL Statements  
 
 ```sql
-CREATE TABLE Departments (
-    id        INT PRIMARY KEY,
-    name      VARCHAR(50) NOT NULL,
-    location  VARCHAR(50)
-);
+-- Filtering rows
+SELECT * 
+FROM   Employees 
+WHERE  Salary < 1000;
 
-CREATE TABLE Employees (
-    id        INT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name  VARCHAR(50) NOT NULL,
-    gender     CHAR(1) CHECK (gender IN ('M','F')),
-    birthdate  DATE      CHECK (birthdate > '1900-01-01'),
-    salary     DECIMAL(10,2) CHECK (salary >= 0),
-    dept_id    INT  NOT NULL,
-    CONSTRAINT fk_emp_dept
-        FOREIGN KEY (dept_id) REFERENCES Departments(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    CONSTRAINT uq_emp_fullname
-        UNIQUE (first_name, last_name, birthdate)
-);
+-- Combined conditions
+SELECT FirstName, LastName
+FROM   Employees
+WHERE  Salary < 1000
+  AND  Gender = 'M';
+
+-- Range search
+SELECT * 
+FROM   Employees 
+WHERE  Salary BETWEEN 500 AND 1000;
+
+-- Aggregations
+SELECT COUNT(*)      FROM Employees;
+SELECT SUM(Salary)   FROM Employees;
+SELECT AVG(Salary)   FROM Employees;
+
+-- Data modification
+DELETE FROM Employees WHERE ID = 10;
+UPDATE Employees 
+SET    FirstName = 'Amjad' 
+WHERE  ID = 10;
+``` :contentReference[oaicite:3]{index=3}  
+
+---
+
+## 4 · DDL, DML, DCL, TCL, DQL — The Five SQL Command Families  
+
+| Family | Purpose | Typical Commands | Mnemonic |
+|--------|---------|------------------|----------|
+| **DDL**<br>Data Definition Language | Define or alter structures | `CREATE`, `DROP`, `ALTER`, `TRUNCATE` | *“Shape it”* |
+| **DML**<br>Data Manipulation Language | Change data inside tables | `INSERT`, `UPDATE`, `DELETE` | *“Change it”* |
+| **DCL**<br>Data Control Language | Control access/rights | `GRANT`, `REVOKE` | *“Guard it”* |
+| **TCL**<br>Transaction Control Language | Manage transactions | `COMMIT`, `ROLLBACK`, `SAVEPOINT` | *“Group it”* |
+| **DQL**<br>Data Query Language | Query data | `SELECT` | *“Get it”* | :contentReference[oaicite:4]{index=4}  
+
+---
+
+## 5 · Cheat-Sheet of Core Commands  
+
+| Goal | Minimal Syntax |
+|------|----------------|
+| Create a database | `CREATE DATABASE db_name;` |
+| Create a table | `CREATE TABLE tbl (...);` |
+| Retrieve data | `SELECT columns FROM tbl WHERE …;` |
+| Update a row | `UPDATE tbl SET col = val WHERE pk = …;` |
+| Delete a row | `DELETE FROM tbl WHERE pk = …;` |
+| Commit work | `COMMIT;` |
+| Undo uncommitted work | `ROLLBACK;` |
+
+---
+
+## 6 · Summary  
+
+* **SQL is the universal language for relational databases.**  
+* It spans five families of commands covering **definition, manipulation, security, transaction, and querying**.  
+* Mastering SQL foundations unlocks database creation, maintenance, and analysis across virtually every RDBMS. :contentReference[oaicite:5]{index=5}  
+
+---
+
+## 7 · License  
+
+Original slide content © 2023 Mohammed Abu-Hadhoud / ProgrammingAdvices.com.  
+This Markdown adaptation is released under the MIT License.
